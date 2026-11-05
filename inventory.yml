@@ -1,0 +1,21 @@
+---
+# Inwentarz serwerów portalu. Środowisko wybiera się opcją --limit test lub --limit prod.
+# Połączenie odbywa się na dedykowane konto deploy (Część 1 projektu).
+all:
+  children:
+    portal:
+      children:
+        test:
+          hosts:
+            test.koziol.lan:
+              ansible_host: 192.168.60.13
+          vars:
+            portal_srodowisko: TEST
+        prod:
+          hosts:
+            prod.koziol.lan:
+              ansible_host: 192.168.60.14
+          vars:
+            portal_srodowisko: PROD
+      vars:
+        ansible_user: deploy

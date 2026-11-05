@@ -1,0 +1,5 @@
+---
+# Kolekcje Ansible wymagane przez playbook. Instalacja (jeżeli nie są dostępne w systemie):
+#   ansible-galaxy collection install -r requirements.yml
+collections:
+  - name: community.docker

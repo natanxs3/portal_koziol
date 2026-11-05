@@ -1,0 +1,101 @@
+---
+# Wdrożenie portalu KoziołNet: Docker Engine + kontener Nginx serwujący pliki z katalogu strona/.
+#
+# Wybór środowiska odbywa się przez ograniczenie inwentarza do grupy test lub prod, np.:
+#   ansible-playbook wdrozenie_portalu.yml --limit test
+#   ansible-playbook wdrozenie_portalu.yml --limit prod
+#
+# Playbook jest idempotentny: ponowne uruchomienie bez zmian w katalogu strona/ nie zmienia
+# niczego na serwerze (changed=0). Pliki usunięte z repozytorium są usuwane także z serwera.
+#
+# Paczka (katalog strona/ z plikiem version.json) jest identyczna na TEST i PROD. Nazwę
+# środowiska playbook zapisuje osobno na serwerze, w pliku srodowisko.json - na podstawie
+# zmiennej portal_srodowisko z inwentarza.
+
+- name: Wdrożenie portalu WWW
+  hosts: portal
+  become: true
+
+  vars:
+    portal_katalog: /opt/portal/html
+    portal_obraz: nginx:stable-alpine
+    portal_kontener: portal
+    portal_port: 80
+
+  tasks:
+    - name: Sprawdzenie, czy w inwentarzu określono środowisko serwera
+      ansible.builtin.assert:
+        that:
+          - portal_srodowisko is defined
+          - portal_srodowisko in ['TEST', 'PROD']
+        fail_msg: Zmienna portal_srodowisko (TEST lub PROD) musi być określona w inwentarzu dla grupy serwera.
+        quiet: true
+
+    - name: Instalacja Docker Engine
+      ansible.builtin.import_tasks: zadania/docker.yml
+
+    - name: Utworzenie katalogu na pliki portalu
+      ansible.builtin.file:
+        path: "{{ portal_katalog }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Skopiowanie plików portalu na serwer
+      ansible.builtin.copy:
+        src: strona/
+        dest: "{{ portal_katalog }}/"
+        owner: root
+        group: root
+        mode: "0644"
+        directory_mode: "0755"
+
+    - name: Zapisanie informacji o środowisku serwera (plik nie jest częścią paczki)
+      ansible.builtin.copy:
+        content: "{{ {'srodowisko': portal_srodowisko} | to_nice_json }}\n"
+        dest: "{{ portal_katalog }}/srodowisko.json"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Odczytanie listy plików portalu w repozytorium
+      ansible.builtin.find:
+        paths: "{{ playbook_dir }}/strona"
+        recurse: true
+        hidden: true
+      delegate_to: localhost
+      become: false
+      run_once: true
+      register: portal_pliki_repozytorium
+
+    - name: Odczytanie listy plików portalu na serwerze
+      ansible.builtin.find:
+        paths: "{{ portal_katalog }}"
+        recurse: true
+        hidden: true
+      register: portal_pliki_serwer
+
+    - name: Wyznaczenie plików, których nie ma już w repozytorium
+      ansible.builtin.set_fact:
+        portal_pliki_do_usuniecia: "{{ portal_na_serwerze | difference(portal_w_repozytorium + ['srodowisko.json']) }}"
+      vars:
+        portal_na_serwerze: "{{ portal_pliki_serwer.files | map(attribute='path') | map('relpath', portal_katalog) | list }}"
+        portal_w_repozytorium: "{{ portal_pliki_repozytorium.files | map(attribute='path') | map('relpath', playbook_dir ~ '/strona') | list }}"
+
+    - name: Usunięcie z serwera plików, których nie ma już w repozytorium
+      ansible.builtin.file:
+        path: "{{ portal_katalog }}/{{ item }}"
+        state: absent
+      loop: "{{ portal_pliki_do_usuniecia }}"
+
+    - name: Uruchomienie kontenera Nginx z portalem
+      community.docker.docker_container:
+        name: "{{ portal_kontener }}"
+        image: "{{ portal_obraz }}"
+        state: started
+        restart_policy: unless-stopped
+        published_ports:
+          - "{{ portal_port }}:80"
+        volumes:
+          - "{{ portal_katalog }}:/usr/share/nginx/html:ro"

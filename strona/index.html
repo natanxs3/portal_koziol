@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KoziołNet – portal wewnętrzny</title>
+  <style>
+    :root {
+      --tlo: #f1f5f9;
+      --karta: #ffffff;
+      --tekst: #0f172a;
+      --tekst-slaby: #475569;
+      --ramka: #e2e8f0;
+      --akcent: #2563eb;
+      --jenkins: #d33833;
+      --github: #24292f;
+      --gitlab: #fc6d26;
+      --agh: #68bc71;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--tlo);
+      color: var(--tekst);
+      line-height: 1.55;
+    }
+    a { color: var(--akcent); }
+    .baner {
+      display: none;
+      padding: 10px 16px;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+    }
+    .baner.test { display: block; background: #ea580c; }
+    .baner.nieznane { display: block; background: #64748b; }
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #2563eb 100%);
+      color: #ffffff;
+      padding: 48px 16px 56px;
+    }
+    .kontener { max-width: 1040px; margin: 0 auto; }
+    header .nadtytul {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #bfdbfe;
+    }
+    header h1 { margin: 0 0 12px; font-size: clamp(30px, 5vw, 44px); line-height: 1.15; }
+    header p { margin: 0; max-width: 680px; color: #dbeafe; font-size: 17px; }
+    main { padding: 0 16px 48px; }
+    .wersja {
+      margin-top: -28px;
+      background: var(--karta);
+      border: 1px solid var(--ramka);
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 18px 22px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+    }
+    .wersja div span {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--tekst-slaby);
+    }
+    .wersja div strong { font-size: 18px; word-break: break-all; }
+    h2 { margin: 40px 0 6px; font-size: 22px; }
+    .opis-sekcji { margin: 0 0 18px; color: var(--tekst-slaby); }
+    .kafelki {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+    }
+    .kafelek {
+      display: block;
+      background: var(--karta);
+      border: 1px solid var(--ramka);
+      border-top: 5px solid var(--kolor, var(--akcent));
+      border-radius: 12px;
+      padding: 18px 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    a.kafelek:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(15, 23, 42, 0.1); }
+    .kafelek h3 { margin: 0 0 6px; font-size: 18px; }
+    .kafelek p { margin: 0 0 10px; color: var(--tekst-slaby); font-size: 15px; }
+    .kafelek code {
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 13px;
+      background: var(--tlo);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .etykieta {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #ffffff;
+      background: var(--kolor, var(--akcent));
+    }
+    footer {
+      border-top: 1px solid var(--ramka);
+      padding: 22px 16px 32px;
+      color: var(--tekst-slaby);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="baner" class="baner"></div>
+
+  <header>
+    <div class="kontener">
+      <p class="nadtytul">Portal wewnętrzny</p>
+      <h1>KoziołNet</h1>
+      <p>Witamy w portalu pracowników. Wszystkie usługi tej platformy są dostarczane
+        automatycznie przez potoki CI/CD – bez ręcznych zmian „na produkcji”.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="kontener">
+      <section class="wersja" aria-label="Informacje o wdrożonej wersji portalu">
+        <div><span>Środowisko</span><strong id="srodowisko">–</strong></div>
+        <div><span>Numer budowania</span><strong id="build">–</strong></div>
+        <div><span>Commit</span><strong id="commit">–</strong></div>
+        <div><span>Data budowania</span><strong id="data">–</strong></div>
+      </section>
+
+      <h2>Usługi platformy</h2>
+      <p class="opis-sekcji">Adresy działają po skonfigurowaniu AdGuard Home jako serwera DNS
+        komputera.</p>
+      <div class="kafelki">
+        <a class="kafelek" style="--kolor: var(--jenkins)" href="http://jenkins.koziol.lan:8080/">
+          <span class="etykieta">Zespół WWW</span>
+          <h3>Jenkins</h3>
+          <p>Potoki wdrażające ten portal oraz monitorowanie platformy.</p>
+          <code>jenkins.koziol.lan</code>
+        </a>
+        <a class="kafelek" style="--kolor: var(--agh)" href="http://agh.koziol.lan/">
+          <span class="etykieta">Zespół bezpieczeństwa</span>
+          <h3>AdGuard Home</h3>
+          <p>Filtrujący serwer DNS dla wszystkich komputerów w firmie.</p>
+          <code>agh.koziol.lan</code>
+        </a>
+        <div class="kafelek" style="--kolor: var(--github)">
+          <span class="etykieta">Zespół DNS</span>
+          <h3>Serwer DNS</h3>
+          <p>Autorytatywny serwer BIND dla strefy wewnętrznej firmy.</p>
+          <code>ns1.koziol.lan</code>
+        </div>
+        <a class="kafelek" style="--kolor: var(--gitlab)" href="https://gitlab.koziol.lan/">
+          <span class="etykieta">Część rozszerzona</span>
+          <h3>GitLab</h3>
+          <p>Własna instancja GitLab firmy (jeżeli została uruchomiona).</p>
+          <code>gitlab.koziol.lan</code>
+        </a>
+      </div>
+
+      <h2>Kto co dostarcza?</h2>
+      <p class="opis-sekcji">Po połączeniu trzech firm każdy zespół zachował swoje narzędzie CI/CD.</p>
+      <div class="kafelki">
+        <div class="kafelek" style="--kolor: var(--jenkins)">
+          <h3>Jenkins → portal WWW</h3>
+          <p>Wdrożenie przez Ansible: najpierw na TEST, na PROD po zatwierdzeniu.</p>
+          <a href="http://www-test.koziol.lan/">www-test.koziol.lan</a>
+        </div>
+        <div class="kafelek" style="--kolor: var(--github)">
+          <h3>GitHub Actions → DNS</h3>
+          <p>Obraz Docker z serwerem BIND: testy, Docker Hub, TEST, zatwierdzenie, PROD.</p>
+        </div>
+        <div class="kafelek" style="--kolor: var(--gitlab)">
+          <h3>GitLab CI/CD → AdGuard Home</h3>
+          <p>Konfiguracja filtrowania DNS w całości przechowywana jako kod.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="kontener">
+      Projekt zaliczeniowy „Narzędzia CI/CD” · autor: <strong>Natan Kozioł</strong>
+    </div>
+  </footer>
+
+  <script>
+    // version.json    - metadane paczki generowane przez potok Jenkins (identyczne na TEST i PROD),
+    // srodowisko.json - zapisywany na serwerze przez playbook (nie jest częścią paczki).
+    (function () {
+      var baner = document.getElementById('baner');
+
+      function ustaw(id, wartosc) {
+        document.getElementById(id).textContent = wartosc || '–';
+      }
+
+      function pokazBaner(tekst, klasa) {
+        if (baner.className.indexOf('test') !== -1) { return; }
+        baner.textContent = tekst;
+        baner.className = 'baner ' + klasa;
+      }
+
+      function pobierz(plik) {
+        return fetch(plik, { cache: 'no-store' }).then(function (odpowiedz) {
+          if (!odpowiedz.ok) { throw new Error(plik + ': HTTP ' + odpowiedz.status); }
+          return odpowiedz.json();
+        });
+      }
+
+      pobierz('version.json')
+        .then(function (wersja) {
+          ustaw('build', wersja.build);
+          ustaw('commit', wersja.commit);
+          ustaw('data', wersja.data);
+        })
+        .catch(function () {
+          pokazBaner('Brak informacji o wersji – nie udało się odczytać pliku version.json', 'nieznane');
+        });
+
+      pobierz('srodowisko.json')
+        .then(function (dane) {
+          var srodowisko = String(dane.srodowisko || '').toUpperCase();
+          ustaw('srodowisko', srodowisko);
+          if (srodowisko === 'TEST') {
+            pokazBaner('ŚRODOWISKO TESTOWE – to nie jest wersja produkcyjna portalu', 'test');
+          } else if (srodowisko !== 'PROD') {
+            pokazBaner('Nieznane środowisko – portal nie został wdrożony playbookiem', 'nieznane');
+          }
+        })
+        .catch(function () {
+          pokazBaner('Nieznane środowisko – portal nie został wdrożony playbookiem', 'nieznane');
+        });
+    })();
+  </script>
+</body>
+</html>

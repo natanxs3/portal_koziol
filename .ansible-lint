@@ -1,0 +1,6 @@
+---
+# Konfiguracja ansible-lint dla repozytorium portalu.
+profile: moderate
+
+exclude_paths:
+  - strona/

@@ -1,0 +1,2 @@
+# Wymuszenie końców linii LF - pliki trafiają na serwery Linux.
+* text=auto eol=lf

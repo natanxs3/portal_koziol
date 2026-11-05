@@ -1,0 +1,57 @@
+---
+# Instalacja Docker Engine z oficjalnego repozytorium Docker (Debian GNU/Linux).
+# Plik zadań dołączany do playbooków poleceniem import_tasks - zadania są idempotentne,
+# więc na serwerze z już zainstalowanym Dockerem nic nie zmieniają.
+
+- name: Instalacja pakietów wymaganych przez repozytorium Docker i moduły Ansible
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - python3-docker
+      - python3-requests
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Utworzenie katalogu na klucze repozytoriów apt
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Pobranie klucza GPG repozytorium Docker
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Dodanie repozytorium Docker
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [arch={{ docker_architektura }} signed-by=/etc/apt/keyrings/docker.asc]
+      https://download.docker.com/linux/debian {{ ansible_facts['distribution_release'] }} stable
+    filename: docker
+    state: present
+  vars:
+    docker_architektura: "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}"
+
+- name: Instalacja Docker Engine i wtyczki Docker Compose
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+
+- name: Uruchomienie usługi Docker wraz ze startem systemu
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
