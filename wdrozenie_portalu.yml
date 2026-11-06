@@ -78,7 +78,7 @@
 
     - name: Wyznaczenie plików, których nie ma już w repozytorium
       ansible.builtin.set_fact:
-        portal_pliki_do_usuniecia: "{{ portal_na_serwerze | difference(portal_w_repozytorium + ['srodowisko.json']) }}"
+        portal_pliki_do_usuniecia: "{{ portal_na_serwerze | difference(portal_w_repozytorium) | difference(['srodowisko.json']) }}"
       vars:
         portal_na_serwerze: "{{ portal_pliki_serwer.files | map(attribute='path') | map('relpath', portal_katalog) | list }}"
         portal_w_repozytorium: "{{ portal_pliki_repozytorium.files | map(attribute='path') | map('relpath', playbook_dir ~ '/strona') | list }}"
