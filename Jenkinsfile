@@ -78,7 +78,7 @@ tar -xzf portal.tar.gz -C paczka'''
   }
   post {
     failure {
-      emailext(to: 'nk136070@student.polsl.pl', subject: "BLAD: ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Srodowisko: ${params.SRODOWISKO}\nLog: ${env.BUILD_URL}console")
+      emailext(to: 'nk316070@student.polsl.pl', subject: "BLAD: ${env.JOB_NAME} #${env.BUILD_NUMBER}", body: "Srodowisko: ${params.SRODOWISKO}\nLog: ${env.BUILD_URL}console")
     }
   }
 }
