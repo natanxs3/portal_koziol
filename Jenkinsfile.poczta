@@ -1,0 +1,13 @@
+node('agent_koziol') {
+  timestamps {
+    timeout(time: 3, unit: 'MINUTES') {
+      stage('Test SMTP Microsoft 365') {
+        emailext(
+          to: 'nk316070@student.polsl.pl',
+          subject: 'Test SMTP Jenkins — projekt CI/CD Natan Koziol',
+          body: "Wiadomosc testowa powiadomien projektu CI/CD.\nNadawca: lokalny Jenkins.\nPrzebieg: ${env.BUILD_URL}"
+        )
+      }
+    }
+  }
+}
