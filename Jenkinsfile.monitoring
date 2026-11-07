@@ -12,15 +12,16 @@ node('agent_koziol') {
           deleteDir()
           checkout scm
         }
-        stage('DNS BIND i AdGuard oraz HTTP health') {
+        stage('DNS BIND i AdGuard oraz HTTP / i /health') {
           sh 'python3 ci/monitoring.py'
         }
       } catch (error) {
         currentBuild.result = 'FAILURE'
+        def wynik = fileExists('monitoring-wynik.txt') ? readFile('monitoring-wynik.txt') : "Nie udalo sie uruchomic sprawdzen: ${error.message}"
         emailext(
           to: 'nk316070@student.polsl.pl',
           subject: "ALARM portalu: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-          body: "Monitoring DNS/HTTP portalu www.koziol.lan wykryl blad.\n${env.BUILD_URL}console"
+          body: "Monitoring DNS/HTTP portalu www.koziol.lan wykryl blad.\n${wynik}\n${env.BUILD_URL}console"
         )
         throw error
       }
